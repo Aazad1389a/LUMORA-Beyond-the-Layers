@@ -1,0 +1,55 @@
+name: Build & Deploy LUMORA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch PeerJS 1.5.4 (embedded at build time)
+        run: curl -fsSL https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js -o parts/_peerjs_lib.js
+
+      - name: Build single-file game
+        env:
+          LUMORA_OUT: ${{ github.workspace }}/dist
+        run: node build.js
+
+      - name: Sanity check build
+        run: |
+          test -s dist/LUMORA_Beyond_the_Layers.html
+          if grep -q '__JS__\|__PEERJS__\|__CSS__' dist/LUMORA_Beyond_the_Layers.html; then
+            echo "ERROR: unresolved placeholder in build output"
+            exit 1
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

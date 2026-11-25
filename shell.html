@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fa" data-build="v3.1.20261124">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>LUMORA: Beyond the Layers</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c0a14'/%3E%3Cpath d='M16 5 L25 13 L16 27 L7 13 Z' fill='none' stroke='%23ffd76a' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='14' r='3.2' fill='%2359f2e0'/%3E%3C/svg%3E">
+<script>
+/* boot guard (ES5): any fatal error becomes a visible banner, never a silent black screen */
+window.__bootOK = false;
+window.__lumoraError = function (msg) {
+  try {
+    var b = document.getElementById('lumora-err');
+    if (!b) {
+      b = document.createElement('div');
+      b.id = 'lumora-err';
+      b.setAttribute('dir', 'rtl');
+      b.style.cssText = 'position:fixed;inset:auto 12px 12px 12px;z-index:99999;background:#3a0d18;color:#ffd9df;border:1px solid #ff6b7a;border-radius:10px;padding:12px 16px;font:13px/1.7 Tahoma,sans-serif;max-width:640px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.5)';
+      b.innerHTML = '<b>LUMORA — پیام خطا:</b> <span id="lumora-err-msg"></span><br><span style="opacity:.75">اگر این پیام مکرر ظاهر شد، مرورگر را به‌روز کنید یا از Chrome / Firefox / Edge نسخه‌ی جدید استفاده کنید.</span>';
+      (document.body || document.documentElement).appendChild(b);
+    }
+    document.getElementById('lumora-err-msg').textContent = String(msg).slice(0, 300);
+  } catch (e2) { /* nothing more we can do */ }
+};
+window.onerror = function (m) { window.__lumoraError(m); };
+window.addEventListener('unhandledrejection', function (ev) { window.__lumoraError((ev && ev.reason && ev.reason.message) || 'promise rejection'); });
+setTimeout(function () {
+  if (!window.__bootOK) window.__lumoraError('راه‌اندازی کامل نشد — احتمالاً مرورگر شما بخشی از بازی را پشتیبانی نمی‌کند.');
+}, 7000);
+</script>
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <!-- ======= SPLASH ======= -->
+  <div class="screen active" id="scr-splash">
+    <div class="splash-inner">
+      <div class="logo-mark"><span class="lm d1"></span><span class="lm d2"></span><span class="lm d3"></span></div>
+      <div class="logo-main">LUMORA</div>
+      <div class="logo-sub">BEYOND THE LAYERS</div>
+      <div class="splash-hint">برای شروع کلیک کنید</div>
+      <div class="splash-tip" id="splash-tip"></div>
+      <div class="splash-ver">NEXORA PLATFORM · v3.1 WORLDS</div>
+    </div>
+  </div>
+
+  <!-- ======= MAIN MENU ======= -->
+  <div class="screen" id="scr-menu">
+    <canvas id="menu-bg"></canvas>
+    <div class="menu-inner">
+     <div class="menu-left">
+      <div class="logo-block">
+        <div class="logo-diamonds"><i></i><i></i><i></i></div>
+        <div class="logo-main">LUMORA</div>
+        <div class="logo-sub">BEYOND THE LAYERS</div>
+        <div class="logo-fa">فراتر از لایه‌ها</div>
+      </div>
+      <nav class="menu-nav">
+        <div class="mgroup m-primary">
+          <button class="mbtn primary" id="btn-continue"><span class="mb-fa" data-i18n="btn-continue">ادامه بازی</span><span class="mb-en">CONTINUE</span></button>
+          <button class="mbtn" id="btn-new"><span class="mb-fa" data-i18n="btn-new">بازی جدید</span><span class="mb-en">NEW GAME</span></button>
+        </div>
+        <div class="mgroup m-secondary">
+          <button class="mbtn" id="btn-worlds"><span class="mb-fa" data-i18n="btn-worlds">انتخاب جهان</span><span class="mb-en">WORLD SELECTION</span></button>
+          <button class="mbtn" id="btn-multi"><span class="mb-fa" data-i18n="btn-multi">مولتی‌پلیر آنلاین</span><span class="mb-en">ONLINE MULTIPLAYER</span></button>
+          <button class="mbtn" id="btn-shop"><span class="mb-fa" data-i18n="btn-shop">فروشگاه</span><span class="mb-en">SHOP</span></button>
+          <button class="mbtn" id="btn-infinite"><span class="mb-fa" data-i18n="btn-infinite">مراحل بی‌نهایت</span><span class="mb-en">INFINITE LEVELS</span></button>
+          <button class="mbtn accent" id="btn-daily"><span class="mb-fa" data-i18n="btn-daily">چالش روز</span><span class="mb-en">DAILY RUN</span></button>
+          <button class="mbtn" id="btn-missions"><span class="mb-fa" data-i18n="btn-missions">چالش‌ها</span><span class="mb-en">MISSIONS</span></button>
+        </div>
+        <div class="mgroup m-tertiary">
+          <button class="mbtn small" id="btn-settings"><span class="mb-fa" data-i18n="btn-settings">تنظیمات</span><span class="mb-en">SETTINGS</span></button>
+          <button class="mbtn small" id="btn-ach"><span class="mb-fa" data-i18n="btn-ach">دستاوردها</span><span class="mb-en">ACHIEVEMENTS</span></button>
+          <button class="mbtn small" id="btn-credits"><span class="mb-fa" data-i18n="btn-credits">عوامل سازنده</span><span class="mb-en">CREDITS</span></button>
+          <button class="mbtn small danger" id="btn-exit"><span class="mb-fa" data-i18n="btn-exit">خروج</span><span class="mb-en">EXIT</span></button>
+        </div>
+      </nav>
+     </div>
+     <aside class="menu-aside">
+      <div class="aside-card">
+        <canvas id="menu-char" width="150" height="170"></canvas>
+        <div class="aside-name">LUMORA</div>
+      </div>
+      <div class="aside-stats" id="menu-stats"></div>
+      <div class="aside-coins" id="menu-coins"></div>
+      <div class="aside-keys" data-i18n="menu-keys">حرکت ← → &nbsp;·&nbsp; پرش Space &nbsp;·&nbsp; لایه‌ها Q / E یا 1-4 &nbsp;·&nbsp; سُرخوردن S</div>
+      <div class="aside-ver">v3.1 · REMASTERED WORLDS</div>
+     </aside>
+    </div>
+  </div>
+
+  <!-- ======= WORLD SELECT ======= -->
+  <div class="screen" id="scr-worlds">
+    <div class="panel wide">
+      <div class="panel-head"><h2 data-i18n="ttl-worlds">جهان‌ها</h2><span class="panel-sub">WORLDS</span></div>
+      <div class="world-grid" id="world-grid"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-worlds-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= SHOP ======= -->
+  <div class="screen" id="scr-shop">
+    <div class="panel wide">
+      <div class="panel-head"><h2 data-i18n="ttl-shop">فروشگاه</h2><span class="panel-sub" id="shop-coins">🪙 0</span></div>
+      <div class="shop-grid" id="shop-grid"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-shop-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= LEVEL SELECT ======= -->
+  <div class="screen" id="scr-levels">
+    <div class="panel">
+      <div class="panel-head"><h2 id="levels-title">جهان</h2><span class="panel-sub" id="levels-sub">LEVELS</span></div>
+      <div class="level-list" id="level-list"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-levels-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= MISSIONS ======= -->
+  <div class="screen" id="scr-missions">
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="ttl-missions">چالش‌های روز</h2><span class="panel-sub" id="missions-date">—</span></div>
+      <div id="mission-list" class="mission-list"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-missions-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= SETTINGS ======= -->
+  <div class="screen" id="scr-settings">
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="ttl-settings">تنظیمات</h2><span class="panel-sub">SETTINGS</span></div>
+      <div class="set-groups">
+        <div class="set-group">
+          <h3 data-i18n="st-audio">صدا</h3>
+          <label class="set-row"><span class="set-label" data-i18n="st-music">موسیقی</span><input type="range" id="set-music" min="0" max="100" value="80"><span class="set-val" id="val-music">80</span></label>
+          <label class="set-row"><span class="set-label" data-i18n="st-sfx">جلوه‌های صوتی</span><input type="range" id="set-sfx" min="0" max="100" value="90"><span class="set-val" id="val-sfx">90</span></label>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-video">نمایش</h3>
+          <label class="set-row"><span class="set-label" data-i18n="st-shake">لرزش دوربین</span><button class="toggle on" id="set-shake"><i></i></button><span class="set-val"></span></label>
+          <label class="set-row"><span class="set-label" data-i18n="st-fps">نمایش FPS</span><button class="toggle" id="set-fps"><i></i></button><span class="set-val"></span></label>
+          <label class="set-row"><span class="set-label" data-i18n="st-motion">حرکات سینمایی</span><button class="toggle on" id="set-motion"><i></i></button><span class="set-val"></span></label>
+          <label class="set-row"><span class="set-label" data-i18n="st-crt">فیلتر CRT</span><button class="toggle" id="set-crt"><i></i></button><span class="set-val"></span></label>
+          <label class="set-row"><span class="set-label" data-i18n="st-particles">کیفیت ذرات</span><select id="set-particles"><option value="high" data-i18n="pq-high">بالا</option><option value="medium" data-i18n="pq-medium">متوسط</option><option value="low" data-i18n="pq-low">کم</option></select><span class="set-val"></span></label>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-lang">زبان</h3>
+          <label class="set-row"><span class="set-label">Language / زبان</span><select id="set-lang"><option value="fa">فارسی</option><option value="en">English</option></select><span class="set-val"></span></label>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-gameplay">گیم‌پلی</h3>
+          <label class="set-row"><span class="set-label" data-i18n="st-touch">کنترل لمسی</span><select id="set-touch"><option value="auto" data-i18n="tc-auto">خودکار</option><option value="on" data-i18n="tc-on">روشن</option><option value="off" data-i18n="tc-off">خاموش</option></select><span class="set-val"></span></label>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-keys">کنترل‌ها</h3>
+          <div id="bind-rows"></div>
+          <div class="set-row"><span class="set-label"></span><button class="mbtn small" id="bind-reset"><span class="mb-fa" data-i18n="bind-reset">بازنشانی دکمه‌ها</span></button><span class="set-val"></span></div>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-net">شبکه</h3>
+          <label class="set-row"><span class="set-label" data-i18n="st-signal">سرور سیگنالینگ دلخواه</span><input id="set-signaling" data-i18n-ph="st-signal-h" placeholder="خالی = سرور پیش‌فرض"><span class="set-val"></span></label>
+        </div>
+        <div class="set-group">
+          <h3 data-i18n="st-data">داده‌ها</h3>
+          <div class="set-row"><span class="set-label" data-i18n="st-save">پیشرفت بازی به‌صورت خودکار ذخیره می‌شود</span></div>
+          <div class="set-row"><span class="set-label"></span><button class="mbtn small danger" id="set-reset"><span class="mb-fa" data-i18n="st-reset">پاک‌کردن پیشرفت</span></button><span class="set-val"></span></div>
+        </div>
+      </div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-settings-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= ACHIEVEMENTS ======= -->
+  <div class="screen" id="scr-ach">
+    <div class="panel wide">
+      <div class="panel-head"><h2 data-i18n="ttl-ach">دستاوردها</h2><span class="panel-sub" id="ach-count">0 / 12</span></div>
+      <div class="ach-grid" id="ach-grid"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-ach-back"><span class="mb-fa">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= PAUSE ======= -->
+  <div class="screen dim" id="scr-pause">
+    <div class="panel slim">
+      <div class="panel-head"><h2 data-i18n="ttl-pause">توقف</h2><span class="panel-sub" id="pause-level"></span></div>
+      <nav class="menu-nav">
+        <button class="mbtn" id="btn-resume"><span class="mb-fa" data-i18n="p-resume">ادامه</span><span class="mb-en">RESUME</span></button>
+        <button class="mbtn" id="btn-restart"><span class="mb-fa" data-i18n="p-restart">شروع دوباره مرحله</span><span class="mb-en">RESTART LEVEL</span></button>
+        <button class="mbtn" id="btn-pause-settings"><span class="mb-fa" data-i18n="p-settings">تنظیمات</span><span class="mb-en">SETTINGS</span></button>
+        <button class="mbtn danger" id="btn-quit"><span class="mb-fa" data-i18n="p-quit">خروج به منو</span><span class="mb-en">QUIT TO MENU</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ======= LEVEL COMPLETE ======= -->
+  <div class="screen dim" id="scr-complete">
+    <div class="panel slim">
+      <div class="panel-head"><h2 data-i18n="ttl-complete">مرحله کامل شد!</h2><span class="panel-sub">LEVEL CLEAR</span><div class="rank-badge" id="rank-badge" style="display:none">S</div></div>
+      <div class="stat-rows" id="complete-stats"></div>
+      <nav class="menu-nav">
+        <button class="mbtn primary" id="btn-next"><span class="mb-fa" data-i18n="c-next">مرحله بعدی</span><span class="mb-en">NEXT LEVEL</span></button>
+        <button class="mbtn" id="btn-replay"><span class="mb-fa" data-i18n="c-replay">تکرار مرحله</span><span class="mb-en">REPLAY</span></button>
+        <button class="mbtn" id="btn-complete-menu"><span class="mb-fa" data-i18n="c-menu">منو</span><span class="mb-en">MENU</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ======= VICTORY ======= -->
+  <div class="screen dim" id="scr-victory">
+    <div class="panel slim victory">
+      <div class="logo-mark small"><span class="lm d1"></span><span class="lm d2"></span><span class="lm d3"></span></div>
+      <div class="logo-main mini">LUMORA</div>
+      <h2 class="vic-title">فراتر از لایه‌ها</h2>
+      <div class="vic-text">نگهبان لایه‌ها شکست خورد. نور اکنون در همه‌ی لایه‌ها جاری است.</div>
+      <div class="stat-rows" id="victory-stats"></div>
+      <nav class="menu-nav"><button class="mbtn primary" id="btn-victory-menu"><span class="mb-fa">بازگشت به منو</span></button></nav>
+    </div>
+  </div>
+
+  <!-- ======= CONFIRM MODAL ======= -->
+  <div class="screen dim topmost" id="scr-confirm">
+    <div class="panel slim">
+      <div class="panel-head"><h2 id="confirm-title">تأیید</h2></div>
+      <div class="confirm-text" id="confirm-text"></div>
+      <nav class="menu-nav row">
+        <button class="mbtn danger" id="confirm-yes"><span class="mb-fa" data-i18n="cf-yes">بله</span></button>
+        <button class="mbtn" id="confirm-no"><span class="mb-fa" data-i18n="cf-no">خیر</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ======= CREDITS ======= -->
+  <div class="screen dim" id="scr-credits">
+    <div class="panel wide">
+      <div class="panel-head"><h2 data-i18n="ttl-credits">عوامل سازنده</h2><span class="panel-sub">CREDITS</span></div>
+      <div id="credits-body" class="credits-body"></div>
+      <div class="panel-actions"><button class="mbtn small" id="btn-credits-back"><span class="mb-fa" data-i18n="back">بازگشت</span></button></div>
+    </div>
+  </div>
+
+  <!-- ======= HUD ======= -->
+  <div id="hud">
+    <div class="hud-tl">
+      <div class="energy-wrap"><div class="energy-label">NEXORA</div><div class="energy-bar"><div class="energy-fill" id="energy-fill"></div><div class="energy-ticks"><i></i><i></i><i></i><i></i></div></div></div>
+      <div class="hud-chips">
+        <div class="chip crystal"><svg viewBox="0 0 24 24"><path d="M12 2 L19 9 L12 22 L5 9 Z"/></svg><span id="crystal-count">0</span></div>
+        <div class="chip timer" id="timer">0:00</div>
+        <div class="chip score"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.7L12 16.9 5.8 20.2l1.6-6.7L2.2 8.9l6.9-.6z"/></svg><span id="score-count">0</span></div>
+      </div>
+    </div>
+    <div class="hud-tr"><div class="level-tag" id="level-tag"></div></div>
+    <div class="hud-tc"><div class="layer-pill" id="layer-pill"></div>
+      <div id="combo" class="combo hidden"><b id="combo-n">×1</b><span id="combo-m">×1.0</span><div class="combo-bar"><i id="combo-fill"></i></div></div>
+    </div>
+    <div class="hud-bl" id="ability-chips"></div>
+    <div class="boss-wrap hidden" id="bossbar"><div class="boss-name">نگهبان لایه‌ها — THE WARDEN</div><div class="boss-bar"><div class="boss-fill" id="boss-fill"></div></div></div>
+    <div id="mp-hud" style="display:none"></div>
+  </div>
+
+
+  <!-- ======= ONLINE MULTIPLAYER ======= -->
+  <div class="screen dim" id="scr-mp">
+    <div class="panel mp-panel">
+      <h2>مولتی‌پلیر آنلاین — تا ۶ نفر</h2>
+      <div id="mp-connect">
+        <div class="mp-row"><input id="mp-name" data-i18n-ph="mp-name-ph" placeholder="نام شما" maxlength="12"></div>
+        <div class="mp-row">
+          <button class="mbtn small primary" id="mp-host" data-i18n="mp-host">ساخت روم</button>
+          <input id="mp-code" data-i18n-ph="mp-code-ph" placeholder="کد روم (۴ حرف)" maxlength="4" style="text-transform:uppercase">
+          <button class="mbtn small" id="mp-join" data-i18n="mp-join">پیوستن</button>
+        </div>
+        <div class="mp-status" id="mp-net-status"></div>
+        <p class="mp-hint">سازنده‌ی روم کد ۴ حرفی را برای دوستانش می‌فرستد. برای صدا، اجازه‌ی میکروفن لازم است. Push-to-Talk: نگه‌داشتن کلید C.</p>
+      </div>
+      <div id="mp-lobby" style="display:none">
+        <div class="mp-room">کد روم: <b id="mp-room-code">—</b> <button class="mbtn small" id="mp-copy" data-i18n="mp-copy">کپی</button> <span id="mp-count"></span></div>
+        <ul id="mp-players"></ul>
+        <div class="mp-row">
+          <label><span data-i18n="mp-mode">مود بازی:</span>
+            <select id="mp-mode">
+              <option value="race" data-i18n="md-race">🏁 مسابقه تا دروازه</option>
+              <option value="dodge" data-i18n="md-dodge">⚔️ جاخالی (برخورد = مرگ)</option>
+              <option value="hunt" data-i18n="md-hunt">🩸 شکارچی و شکار</option>
+            </select>
+          </label>
+          <label><span data-i18n="mp-time">زمان راند (ثانیه):</span> <input id="mp-time" type="number" min="30" max="600" value="120"></label>
+        </div>
+        <div class="mp-row mp-presets">
+          <button class="mbtn small" id="mp-t60">۶۰s</button>
+          <button class="mbtn small" id="mp-t120">۱۲۰s</button>
+          <button class="mbtn small" id="mp-t180">۱۸۰s</button>
+          <button class="mbtn small" id="mp-t300">۳۰۰s</button>
+        </div>
+        <div class="mp-voice">
+          <button class="mbtn small" id="mp-mic" data-i18n="mp-mic-off">🎙 فعال‌سازی میکروفن</button>
+          <label class="mp-ptt-l"><input type="checkbox" id="mp-ptt" checked> <span data-i18n="mp-ptt">Push-to-Talk (کلید C)</span></label>
+          <label class="mp-vol-l">🔊 <input id="mp-vol" type="range" min="0" max="100" value="80"></label>
+        </div>
+        <div id="mp-chat-log"></div>
+        <div class="mp-row"><input id="mp-chat" data-i18n-ph="mp-chat-ph" placeholder="پیام در چت…" maxlength="120"><button class="mbtn small" id="mp-chat-send" data-i18n="mp-send">ارسال</button></div>
+        <div class="mp-actions">
+          <button class="mbtn primary" id="mp-start" data-i18n="mp-start">شروع بازی</button>
+          <button class="mbtn" id="mp-leave" data-i18n="mp-leave">ترک روم</button>
+        </div>
+      </div>
+      <div class="panel-actions"><button class="mbtn small" id="mp-back">بازگشت</button></div>
+    </div>
+  </div>
+
+  <div class="screen dim" id="scr-mpres">
+    <div class="panel">
+      <h2 id="mpres-title" data-i18n="ttl-mpres">نتیجه‌ی راند</h2>
+      <div id="mpres-rows"></div>
+      <div class="panel-actions">
+        <button class="mbtn small" id="mpres-lobby" data-i18n="mpres-lobby">بازگشت به لابی</button>
+        <button class="mbtn small" id="mpres-exit" data-i18n="mpres-exit">منوی اصلی</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="nexora" class="nexora" style="display:none"></div>
+  <div id="crt-overlay" style="display:none"></div>
+  <div id="fps-counter" style="display:none">60</div>
+  <div id="tip" class="hidden"></div>
+  <div id="toasts"></div>
+  <div id="fader"></div>
+
+  <!-- ======= TOUCH CONTROLS ======= -->
+  <div id="touch" class="hidden">
+    <div class="t-group t-left">
+      <button class="tbtn" id="t-left" data-k="left">◀</button>
+      <button class="tbtn" id="t-right" data-k="right">▶</button>
+    </div>
+    <div class="t-group t-right">
+      <button class="tbtn wide" id="t-slide" data-k="slide">سُر</button>
+      <button class="tbtn" id="t-switch" data-k="switchNext">◈</button>
+      <button class="tbtn big" id="t-jump" data-k="jump">پرش</button>
+    </div>
+  </div>
+</div>
+<noscript>
+  <div dir="rtl" style="position:fixed;inset:0;background:#0c0a14;color:#ffd76a;display:flex;align-items:center;justify-content:center;font:16px Tahoma,sans-serif;text-align:center;padding:24px;z-index:99998">برای اجرای LUMORA باید جاوااسکریپت در مرورگر شما فعال باشد.</div>
+</noscript>
+<script>
+/*__PEERJS__*/
+</script>
+<script>
+/*__JS__*/
+window.__bootOK = true;
+</script>
+</body>
+</html>
