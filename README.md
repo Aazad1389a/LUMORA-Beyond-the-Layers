@@ -22,6 +22,14 @@
 | `parts/` | سورس ماژولار بازی (core, audio, levels, engine, player, enemies, render, ui, multi, ...) |
 | `.github/workflows/deploy-pages.yml` | بیلد و انتشار خودکار روی GitHub Pages |
 
+## انتشار اولیه (فقط یک بار)
+
+۱. فایل `LUMORA-github-upload.zip` را دانلود و استخراج کنید (همه‌ی فایل‌های لازم، شامل `index.html` آماده، داخل آن است).
+۲. در همین ریپو: **Code → Add file → Upload files** و همه‌ی فایل‌های استخراج‌شده را بکشید و رها کنید (روی مک با `Cmd+Shift+.` پوشه‌ی `.github` پیدا می‌شود)، سپس **Commit changes**.
+۳. اکشن `Build & Deploy LUMORA` به‌صورت خودکار بیلد و منتشر می‌کند و آدرس بالای صفحه زنده می‌شود.
+
+روش جایگزین بدون CI: فقط `index.html` را آپلود کنید و در **Settings → Pages** گزینه‌ی *Deploy from a branch* با برنچ `main` و پوشه‌ی `/ (root)` را انتخاب کنید.
+
 ## بیلد محلی
 
 ```bash
